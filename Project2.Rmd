@@ -1,0 +1,26 @@
+---
+title: "Project 2"
+author: "Yuying Zhou"
+date: "10/12/2020"
+output: 
+  rmarkdown::github_document:
+      toc : true
+      toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
+setwd("C:/Users/yzhou/OneDrive - VHB/Desktop/ST 558/Code/Project 2")
+```
+
+#Package List
+```{r}
+library(tidyverse)
+library(caret)
+```
+
+# Data
+```{r}
+Data<-read_csv("../OnlineNewsPopularity.csv")
+Monday<-Data%>%filter(weekday_is_monday==1)
+```
