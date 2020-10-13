@@ -161,7 +161,7 @@ Correlation Table
 
 ``` r
 g<-ggplot(dayDataTrain,aes(x=shares))
-g+geom_histogram(binwidth = 100000)+labs(title = "Shares Histogram")
+g+geom_histogram(binwidth = 100000)+labs(x="Shares", y="Count", title = "Shares Histogram")
 ```
 
 ![](project_yz_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
