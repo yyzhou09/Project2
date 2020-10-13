@@ -3,16 +3,16 @@ Project 2
 Yuying Zhou
 10/12/2020
 
+  - [Package List](#package-list)
   - [Introduction](#introduction)
   - [Data](#data)
   - [Summarizations](#summarizations)
 
-\#Package List
+# Package List
 
 ``` r
 library(tidyverse)
 library(caret)
-library(GGally)
 library(knitr)
 ```
 
@@ -161,7 +161,7 @@ Correlation Table
 
 ``` r
 g<-ggplot(dayDataTrain,aes(x=shares))
-g+geom_histogram(binwidth = 100000)+labs(caption = "Shares Histogram")
+g+geom_histogram(binwidth = 100000)+labs(title = "Shares Histogram")
 ```
 
 ![](project_yz_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
