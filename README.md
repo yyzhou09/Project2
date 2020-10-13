@@ -164,4 +164,58 @@ g<-ggplot(dayDataTrain,aes(x=shares))
 g+geom_histogram(binwidth = 100000)+labs(x="Shares", y="Count", title = "Shares Histogram")
 ```
 
-![](project_yz_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](project_yz_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> \#
+Models  
+This step will create two models. One is a regression tree model and the
+second one is a boosted tree model. The tuning paramter “cp” for the
+regression tree model was chosen using the leave one out cross
+validation. I picked the best tree model using the smallest MAE. The
+boosted tree model used cross-validation with 10 folds. The final chose
+model for the boosted tree model was determined using the smallest MAE.
+
+Once the optimal model was picked, I used the test data set to see which
+model was better at predicting shares. The model with the smallest MAE
+values was considered better at predicting.
+
+The table below shows the RMSE, R-squared, MAE for these two models’
+predictions using the test set. Models
+
+``` r
+tree_fit<-train(shares~., data=dayDataTrain, method="rpart",
+                trControl=trainControl(method = "LOOCV"),
+                preProcess = c("center", "scale"),
+                tuneLength=10,
+                metric="MAE")
+plot(tree_fit)
+```
+
+![](project_yz_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
+bt_fit<-train(shares~., data=dayDataTrain, method="gbm",
+              preProcess = c("center", "scale"),
+              trControl=trainControl(method="cv", number = 10),
+              tuneGrid=expand.grid(n.trees=c(1,5,10), interaction.depth=1:3, shrinkage=c(0.1,0.5,0.9), n.minobsinnode=10),
+              verbose = FALSE,
+              metric="MAE")
+plot(bt_fit)
+```
+
+![](project_yz_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
+
+``` r
+pred_tree<-predict(tree_fit, newdata = dayDataTest)   
+pred_bt<-predict(bt_fit, newdata = dayDataTest)
+pred_tree_metric<-postResample(pred_tree,obs = dayDataTest$shares)
+pred_bt_metric<-postResample(pred_bt,obs = dayDataTest$shares)
+Metric_Table<-data.frame(pred_tree_metric, pred_bt_metric)
+kable(Metric_Table, caption = "Prediction Metric for Two Potential Models", col.names = c("Regressio Tree"," Boosted Tree"))
+```
+
+|          | Regressio Tree | Boosted Tree |
+| :------- | -------------: | -----------: |
+| RMSE     |   1.576846e+04 | 1.507233e+04 |
+| Rsquared |   5.007000e-04 | 1.572500e-03 |
+| MAE      |   5.115493e+03 | 4.571042e+03 |
+
+Prediction Metric for Two Potential Models
