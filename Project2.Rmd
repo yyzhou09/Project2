@@ -10,17 +10,100 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
-setwd("C:/Users/yzhou/OneDrive - VHB/Desktop/ST 558/Code/Project 2")
+setwd("C:/Users/yzhou/OneDrive - VHB/Desktop/ST 558/Project")
 ```
 
-#Package List
+# Package List
 ```{r}
 library(tidyverse)
 library(caret)
+library(knitr)
 ```
+# Introduction    
+The data analyzed in the project is a heterogeneous set of features about articles published by Mashable in a period of two years. It includes 61 variables. The response varialbe is share. The purpose of this project is to build two models- a tree-based model and a boosted tree model- to see which model performs better at predicting the number of shares in social networks. This data set include data for Monday to Sunday, the analysis conducted the same analysis for each day and to see which model suit them.   
 
-# Data
+This analysis did not include all of the predicators. I used the following  
+
++ n_tokens_title: Number of words in the title  
++ n_unique_tokens: Rate of unique words in the content  
++ num_hrefs: Number of links  
++ num_imgs: Number of images  
++ average_token_length: Average length of the words in the content  
++ data_channel_is_lifestyle: Is data channel 'Lifestyle'?  
++ global_rate_positive_words: Rate of positive words in the content   
++ avg_positive_polarity: Avg. polarity of positive words  
++ abs_title_subjectivity: Absolute subjectivity level  
++ self_reference_avg_sharess: Avg. shares of referenced articles in Mashable  
++ kw_avg_min: Worst keyword (avg. shares)  
++ kw_avg_max: Best keyword (avg. shares)  
++ kw_avg_avg: Avg. keyword (avg. shares)
++ shares: Number of shares (target)   
+
 ```{r}
 Data<-read_csv("../OnlineNewsPopularity.csv")
-Monday<-Data%>%filter(weekday_is_monday==1)
+Data<-Data%>%select(n_tokens_title, n_unique_tokens,num_hrefs, num_imgs, average_token_length, data_channel_is_lifestyle, global_rate_positive_words,avg_positive_polarity, abs_title_subjectivity,self_reference_avg_sharess, kw_avg_min, kw_avg_max, kw_avg_avg, shares, starts_with("weekday") )
+
 ```
+
+
+# Data  
+I read data from the folder and then split daily data set into train and test set.
+```{r}
+dayData<-Data%>%filter(weekday_is_monday==1)
+
+set.seed(1)
+
+#try a subset
+sub <- sample(1:nrow(dayData), size = nrow(dayData)*0.1)
+dayData<-dayData[sub,]
+
+train <- sample(1:nrow(dayData), size = nrow(dayData)*0.7)
+test <- dplyr::setdiff(1:nrow(dayData), train)
+dayDataTrain <- dayData[train, ]
+dayDataTest <- dayData[test, ]
+```
+# Summarizations   
+Based on the summary table, no missing values. As shown in the histogram for shares, most articles had zero shares. According to the correlation table, mullinearity is not an issue for the data set.
+```{r}
+summary(dayDataTrain)  
+
+res<-cor(Data)
+tab<-round(res,2)
+kable(tab, caption = "Correlation Table")
+
+g<-ggplot(dayDataTrain,aes(x=shares))
+g+geom_histogram(binwidth = 100000)+labs(x="Shares", y="Count", title = "Shares Histogram")
+
+```
+# Models  
+This step will create two models. One is a regression tree model and the second one is a boosted tree model. The tuning paramter "cp" for the regression tree model was chosen using the leave one out cross validation. I picked the best tree model using the smallest MAE. The boosted tree model used cross-validation with 10 folds. The final chose model for the boosted tree model was determined using the smallest MAE.   
+  
+Once the optimal model was picked, I used the test data set to see which model was better at predicting shares. The model with the smallest MAE values was considered better at predicting.  
+  
+The table below shows the RMSE, R-squared, MAE for these two models' predictions using the test set. Models    
+```{r}
+tree_fit<-train(shares~., data=dayDataTrain, method="rpart",
+                trControl=trainControl(method = "LOOCV"),
+                preProcess = c("center", "scale"),
+                tuneLength=10,
+                metric="MAE")
+plot(tree_fit)
+
+bt_fit<-train(shares~., data=dayDataTrain, method="gbm",
+              preProcess = c("center", "scale"),
+              trControl=trainControl(method="cv", number = 10),
+              tuneGrid=expand.grid(n.trees=c(1,5,10), interaction.depth=1:3, shrinkage=c(0.1,0.5,0.9), n.minobsinnode=10),
+              verbose = FALSE,
+              metric="MAE")
+plot(bt_fit)
+
+pred_tree<-predict(tree_fit, newdata = dayDataTest)   
+pred_bt<-predict(bt_fit, newdata = dayDataTest)
+pred_tree_metric<-postResample(pred_tree,obs = dayDataTest$shares)
+pred_bt_metric<-postResample(pred_bt,obs = dayDataTest$shares)
+Metric_Table<-data.frame(pred_tree_metric, pred_bt_metric)
+kable(Metric_Table, caption = "Prediction Metric for Two Potential Models", col.names = c("Regressio Tree"," Boosted Tree"))
+
+
+```
+

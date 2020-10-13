@@ -50,7 +50,7 @@ following
 <!-- end list -->
 
 ``` r
-Data<-read_csv("OnlineNewsPopularity.csv")
+Data<-read_csv("../OnlineNewsPopularity.csv")
 Data<-Data%>%select(n_tokens_title, n_unique_tokens,num_hrefs, num_imgs, average_token_length, data_channel_is_lifestyle, global_rate_positive_words,avg_positive_polarity, abs_title_subjectivity,self_reference_avg_sharess, kw_avg_min, kw_avg_max, kw_avg_avg, shares, starts_with("weekday") )
 ```
 
@@ -164,8 +164,7 @@ g<-ggplot(dayDataTrain,aes(x=shares))
 g+geom_histogram(binwidth = 100000)+labs(x="Shares", y="Count", title = "Shares Histogram")
 ```
 
-![](project_yz_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> \#
-Models  
+![](Project2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> \# Models  
 This step will create two models. One is a regression tree model and the
 second one is a boosted tree model. The tuning paramter “cp” for the
 regression tree model was chosen using the leave one out cross
@@ -189,7 +188,7 @@ tree_fit<-train(shares~., data=dayDataTrain, method="rpart",
 plot(tree_fit)
 ```
 
-![](project_yz_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](Project2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 bt_fit<-train(shares~., data=dayDataTrain, method="gbm",
@@ -201,7 +200,7 @@ bt_fit<-train(shares~., data=dayDataTrain, method="gbm",
 plot(bt_fit)
 ```
 
-![](project_yz_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
+![](Project2_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
 ``` r
 pred_tree<-predict(tree_fit, newdata = dayDataTest)   
