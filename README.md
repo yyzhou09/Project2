@@ -1,7 +1,7 @@
 This repo is a host for reports for Monday to Sunday.  
 
 I used the following code to automate the reports.
-`DayofWeek<-unique(Data$weekday)
+`r DayofWeek<-unique(Data$weekday)
 render_one<-function(weekday){
   rmarkdown::render(
     "Project2.Rmd",output_file = paste0(weekday,".md"), params = list(weekday=weekday)
