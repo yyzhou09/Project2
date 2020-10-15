@@ -61,16 +61,12 @@ Data<-gather(Data, weekday, weekdayvalue,14:20) %>% filter(weekdayvalue==1)
 
 I read data from the folder and then split daily data set into train and
 test set. The train set include 70% of the data and the test set include
-30% of the data.
+30% of the data. The date was filter to only include values for
 
 ``` r
 dayData<-Data%>%filter(weekday==params$weekday)%>%select(-c(weekday,weekdayvalue))
 
 set.seed(1)
-
-#try a subset
-sub <- sample(1:nrow(dayData), size = nrow(dayData)*0.1)
-dayData<-dayData[sub,]
 
 train <- sample(1:nrow(dayData), size = nrow(dayData)*0.7)
 test <- dplyr::setdiff(1:nrow(dayData), train)
@@ -89,27 +85,34 @@ variations as the global rate positive words change.
 summary(dayDataTrain)  
 ```
 
-    ##  n_unique_tokens    num_hrefs         num_imgs       average_token_length data_channel_is_lifestyle
-    ##  Min.   :0.0000   Min.   :  0.00   Min.   :  0.000   Min.   :0.000        Min.   :0.00000          
-    ##  1st Qu.:0.4811   1st Qu.:  4.00   1st Qu.:  1.000   1st Qu.:4.472        1st Qu.:0.00000          
-    ##  Median :0.5476   Median :  7.00   Median :  1.000   Median :4.643        Median :0.00000          
-    ##  Mean   :0.5390   Mean   : 10.61   Mean   :  4.326   Mean   :4.547        Mean   :0.06015          
-    ##  3rd Qu.:0.6203   3rd Qu.: 13.00   3rd Qu.:  4.000   3rd Qu.:4.848        3rd Qu.:0.00000          
-    ##  Max.   :0.8824   Max.   :110.00   Max.   :108.000   Max.   :5.410        Max.   :1.00000          
-    ##  global_rate_positive_words avg_positive_polarity abs_title_subjectivity self_reference_avg_sharess
-    ##  Min.   :0.00000            Min.   :0.0000        Min.   :0.0000         Min.   :     0            
-    ##  1st Qu.:0.02941            1st Qu.:0.3180        1st Qu.:0.1667         1st Qu.:   959            
-    ##  Median :0.03918            Median :0.3648        Median :0.5000         Median :  2300            
-    ##  Mean   :0.04079            Mean   :0.3601        Mean   :0.3502         Mean   :  7507            
-    ##  3rd Qu.:0.05058            3rd Qu.:0.4139        3rd Qu.:0.5000         3rd Qu.:  6117            
-    ##  Max.   :0.13308            Max.   :0.6870        Max.   :0.5000         Max.   :663600            
-    ##    kw_avg_min       kw_avg_max       kw_avg_avg       shares      
-    ##  Min.   :  -1.0   Min.   :  5362   Min.   :1007   Min.   :   109  
-    ##  1st Qu.: 143.8   1st Qu.:169254   1st Qu.:2313   1st Qu.:  1100  
-    ##  Median : 237.7   Median :238467   Median :2793   Median :  1600  
-    ##  Mean   : 280.9   Mean   :257397   Mean   :3070   Mean   :  3533  
-    ##  3rd Qu.: 345.2   3rd Qu.:330800   3rd Qu.:3519   3rd Qu.:  3150  
-    ##  Max.   :2643.8   Max.   :742725   Max.   :9768   Max.   :102500
+    ##  n_unique_tokens    num_hrefs         num_imgs       average_token_length
+    ##  Min.   :0.0000   Min.   :  0.00   Min.   :  0.000   Min.   :0.000       
+    ##  1st Qu.:0.4763   1st Qu.:  4.00   1st Qu.:  1.000   1st Qu.:4.470       
+    ##  Median :0.5456   Median :  7.00   Median :  1.000   Median :4.663       
+    ##  Mean   :0.5375   Mean   : 10.71   Mean   :  4.434   Mean   :4.555       
+    ##  3rd Qu.:0.6168   3rd Qu.: 13.00   3rd Qu.:  3.000   3rd Qu.:4.862       
+    ##  Max.   :0.9474   Max.   :186.00   Max.   :108.000   Max.   :6.431       
+    ##  data_channel_is_lifestyle global_rate_positive_words avg_positive_polarity
+    ##  Min.   :0.00000           Min.   :0.00000            Min.   :0.0000       
+    ##  1st Qu.:0.00000           1st Qu.:0.02792            1st Qu.:0.3068       
+    ##  Median :0.00000           Median :0.03857            Median :0.3584       
+    ##  Mean   :0.05263           Mean   :0.03919            Mean   :0.3547       
+    ##  3rd Qu.:0.00000           3rd Qu.:0.04982            3rd Qu.:0.4119       
+    ##  Max.   :1.00000           Max.   :0.13699            Max.   :1.0000       
+    ##  abs_title_subjectivity self_reference_avg_sharess   kw_avg_min     
+    ##  Min.   :0.0000         Min.   :     0.0           Min.   :   -1.0  
+    ##  1st Qu.:0.1667         1st Qu.:   944.5           1st Qu.:  142.4  
+    ##  Median :0.5000         Median :  2200.0           Median :  235.8  
+    ##  Mean   :0.3473         Mean   :  6501.1           Mean   :  312.4  
+    ##  3rd Qu.:0.5000         3rd Qu.:  5100.0           3rd Qu.:  353.5  
+    ##  Max.   :0.5000         Max.   :663600.0           Max.   :39979.0  
+    ##    kw_avg_max       kw_avg_avg          shares        
+    ##  Min.   :  5362   Min.   :  776.1   Min.   :    22.0  
+    ##  1st Qu.:174738   1st Qu.: 2381.3   1st Qu.:   984.2  
+    ##  Median :247196   Median : 2858.1   Median :  1500.0  
+    ##  Mean   :261058   Mean   : 3152.7   Mean   :  3309.2  
+    ##  3rd Qu.:334226   3rd Qu.: 3617.0   3rd Qu.:  2700.0  
+    ##  Max.   :843300   Max.   :37607.5   Max.   :233400.0
 
 ``` r
 res<-cor(dayDataTrain)
@@ -119,19 +122,19 @@ kable(tab, caption = "Correlation Table for the Train Data")
 
 |                               | n\_unique\_tokens | num\_hrefs | num\_imgs | average\_token\_length | data\_channel\_is\_lifestyle | global\_rate\_positive\_words | avg\_positive\_polarity | abs\_title\_subjectivity | self\_reference\_avg\_sharess | kw\_avg\_min | kw\_avg\_max | kw\_avg\_avg | shares |
 | :---------------------------- | ----------------: | ---------: | --------: | ---------------------: | ---------------------------: | ----------------------------: | ----------------------: | -----------------------: | ----------------------------: | -----------: | -----------: | -----------: | -----: |
-| n\_unique\_tokens             |              1.00 |     \-0.19 |    \-0.23 |                   0.61 |                       \-0.05 |                          0.32 |                    0.44 |                   \-0.11 |                          0.06 |         0.05 |       \-0.09 |       \-0.03 | \-0.14 |
-| num\_hrefs                    |            \-0.19 |       1.00 |      0.24 |                   0.21 |                         0.15 |                          0.00 |                    0.19 |                     0.04 |                          0.01 |       \-0.01 |       \-0.02 |         0.14 | \-0.01 |
-| num\_imgs                     |            \-0.23 |       0.24 |      1.00 |                   0.06 |                         0.09 |                        \-0.02 |                    0.14 |                   \-0.01 |                          0.01 |       \-0.02 |         0.02 |         0.21 |   0.06 |
-| average\_token\_length        |              0.61 |       0.21 |      0.06 |                   1.00 |                         0.02 |                          0.27 |                    0.57 |                   \-0.07 |                          0.04 |         0.06 |       \-0.22 |       \-0.16 | \-0.24 |
-| data\_channel\_is\_lifestyle  |            \-0.05 |       0.15 |      0.09 |                   0.02 |                         1.00 |                          0.05 |                    0.08 |                   \-0.02 |                        \-0.02 |         0.14 |       \-0.16 |       \-0.04 |   0.04 |
-| global\_rate\_positive\_words |              0.32 |       0.00 |    \-0.02 |                   0.27 |                         0.05 |                          1.00 |                    0.38 |                   \-0.17 |                          0.02 |         0.07 |       \-0.09 |         0.05 | \-0.10 |
-| avg\_positive\_polarity       |              0.44 |       0.19 |      0.14 |                   0.57 |                         0.08 |                          0.38 |                    1.00 |                   \-0.05 |                          0.07 |         0.09 |       \-0.12 |         0.07 | \-0.11 |
-| abs\_title\_subjectivity      |            \-0.11 |       0.04 |    \-0.01 |                 \-0.07 |                       \-0.02 |                        \-0.17 |                  \-0.05 |                     1.00 |                        \-0.02 |         0.01 |       \-0.07 |       \-0.07 |   0.04 |
-| self\_reference\_avg\_sharess |              0.06 |       0.01 |      0.01 |                   0.04 |                       \-0.02 |                          0.02 |                    0.07 |                   \-0.02 |                          1.00 |       \-0.03 |         0.07 |         0.15 |   0.03 |
-| kw\_avg\_min                  |              0.05 |     \-0.01 |    \-0.02 |                   0.06 |                         0.14 |                          0.07 |                    0.09 |                     0.01 |                        \-0.03 |         1.00 |       \-0.41 |         0.04 | \-0.04 |
-| kw\_avg\_max                  |            \-0.09 |     \-0.02 |      0.02 |                 \-0.22 |                       \-0.16 |                        \-0.09 |                  \-0.12 |                   \-0.07 |                          0.07 |       \-0.41 |         1.00 |         0.55 |   0.12 |
-| kw\_avg\_avg                  |            \-0.03 |       0.14 |      0.21 |                 \-0.16 |                       \-0.04 |                          0.05 |                    0.07 |                   \-0.07 |                          0.15 |         0.04 |         0.55 |         1.00 |   0.18 |
-| shares                        |            \-0.14 |     \-0.01 |      0.06 |                 \-0.24 |                         0.04 |                        \-0.10 |                  \-0.11 |                     0.04 |                          0.03 |       \-0.04 |         0.12 |         0.18 |   1.00 |
+| n\_unique\_tokens             |              1.00 |     \-0.11 |    \-0.23 |                   0.64 |                       \-0.04 |                          0.31 |                    0.43 |                   \-0.01 |                          0.07 |         0.01 |       \-0.03 |         0.00 |   0.00 |
+| num\_hrefs                    |            \-0.11 |       1.00 |      0.29 |                   0.23 |                         0.07 |                          0.03 |                    0.19 |                     0.03 |                          0.02 |         0.00 |       \-0.01 |         0.10 |   0.05 |
+| num\_imgs                     |            \-0.23 |       0.29 |      1.00 |                   0.05 |                         0.00 |                        \-0.06 |                    0.09 |                   \-0.01 |                          0.02 |       \-0.02 |         0.04 |         0.15 |   0.04 |
+| average\_token\_length        |              0.64 |       0.23 |      0.05 |                   1.00 |                         0.02 |                          0.30 |                    0.52 |                     0.02 |                          0.04 |         0.02 |       \-0.17 |       \-0.12 | \-0.03 |
+| data\_channel\_is\_lifestyle  |            \-0.04 |       0.07 |      0.00 |                   0.02 |                         1.00 |                          0.07 |                    0.05 |                     0.04 |                        \-0.01 |         0.03 |       \-0.16 |         0.01 |   0.00 |
+| global\_rate\_positive\_words |              0.31 |       0.03 |    \-0.06 |                   0.30 |                         0.07 |                          1.00 |                    0.35 |                   \-0.15 |                          0.03 |         0.06 |       \-0.10 |         0.04 |   0.03 |
+| avg\_positive\_polarity       |              0.43 |       0.19 |      0.09 |                   0.52 |                         0.05 |                          0.35 |                    1.00 |                     0.00 |                          0.07 |         0.02 |       \-0.08 |         0.05 |   0.03 |
+| abs\_title\_subjectivity      |            \-0.01 |       0.03 |    \-0.01 |                   0.02 |                         0.04 |                        \-0.15 |                    0.00 |                     1.00 |                        \-0.03 |         0.00 |       \-0.04 |       \-0.04 | \-0.01 |
+| self\_reference\_avg\_sharess |              0.07 |       0.02 |      0.02 |                   0.04 |                       \-0.01 |                          0.03 |                    0.07 |                   \-0.03 |                          1.00 |         0.07 |         0.09 |         0.18 |   0.05 |
+| kw\_avg\_min                  |              0.01 |       0.00 |    \-0.02 |                   0.02 |                         0.03 |                          0.06 |                    0.02 |                     0.00 |                          0.07 |         1.00 |       \-0.09 |         0.52 |   0.00 |
+| kw\_avg\_max                  |            \-0.03 |     \-0.01 |      0.04 |                 \-0.17 |                       \-0.16 |                        \-0.10 |                  \-0.08 |                   \-0.04 |                          0.09 |       \-0.09 |         1.00 |         0.41 |   0.06 |
+| kw\_avg\_avg                  |              0.00 |       0.10 |      0.15 |                 \-0.12 |                         0.01 |                          0.04 |                    0.05 |                   \-0.04 |                          0.18 |         0.52 |         0.41 |         1.00 |   0.10 |
+| shares                        |              0.00 |       0.05 |      0.04 |                 \-0.03 |                         0.00 |                          0.03 |                    0.03 |                   \-0.01 |                          0.05 |         0.00 |         0.06 |         0.10 |   1.00 |
 
 Correlation Table for the Train Data
 
@@ -147,7 +150,14 @@ g2<-ggplot(dayDataTrain, aes(x=global_rate_positive_words, y=shares))
 g2+geom_jitter()+labs(x="Global Rate Postitive Words", y="Shares", title="Global Rate Postitive Words vs Shares")
 ```
 
-![](weekday_is_friday_files/figure-gfm/summarization-2.png)<!-- --> \#
+![](weekday_is_friday_files/figure-gfm/summarization-2.png)<!-- -->
+
+``` r
+g3<-ggplot(dayDataTrain, aes(x=kw_avg_min, y=shares))
+g3+geom_jitter()+labs(x="Worst keyword", y="Shares", title="Worst keyword vs Shares")
+```
+
+![](weekday_is_friday_files/figure-gfm/summarization-3.png)<!-- --> \#
 Models  
 This step will create two models. One is a regression tree model and the
 second one is a boosted tree model. Both models include all predictors
@@ -198,9 +208,9 @@ kable(Metric_Table, caption = "Prediction Metric for Two Potential Models", col.
 
 |          | Regressio Tree | Boosted Tree |
 | :------- | -------------: | -----------: |
-| RMSE     |   7660.1605186 | 7237.1402640 |
-| Rsquared |      0.0027359 |    0.0017014 |
-| MAE      |   3143.3404200 | 3033.5444110 |
+| RMSE     |   7518.3461751 | 7246.9503467 |
+| Rsquared |      0.0167189 |    0.0347342 |
+| MAE      |   2931.5565974 | 2894.3863577 |
 
 Prediction Metric for Two Potential Models
 

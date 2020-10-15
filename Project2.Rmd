@@ -50,15 +50,11 @@ Data<-gather(Data, weekday, weekdayvalue,14:20) %>% filter(weekdayvalue==1)
 
 
 # Data  
-I read data from the folder and then split daily data set into train and test set. The train set include 70% of the data and the test set include 30% of the data.
+I read data from the folder and then split daily data set into train and test set. The train set include 70% of the data and the test set include 30% of the data. The date was filter to only include values for `r print(params$weekday)`
 ```{r data}
 dayData<-Data%>%filter(weekday==params$weekday)%>%select(-c(weekday,weekdayvalue))
 
 set.seed(1)
-
-#try a subset
-sub <- sample(1:nrow(dayData), size = nrow(dayData)*0.1)
-dayData<-dayData[sub,]
 
 train <- sample(1:nrow(dayData), size = nrow(dayData)*0.7)
 test <- dplyr::setdiff(1:nrow(dayData), train)
@@ -79,6 +75,9 @@ g+geom_histogram(binwidth = 100000)+labs(x="Shares", y="Count", title = "Shares 
 
 g2<-ggplot(dayDataTrain, aes(x=global_rate_positive_words, y=shares))
 g2+geom_jitter()+labs(x="Global Rate Postitive Words", y="Shares", title="Global Rate Postitive Words vs Shares")
+
+g3<-ggplot(dayDataTrain, aes(x=kw_avg_min, y=shares))
+g3+geom_jitter()+labs(x="Worst keyword", y="Shares", title="Worst keyword vs Shares")
 ```
 #  Models  
 This step will create two models. One is a regression tree model and the second one is a boosted tree model. Both models include all predictors included in the data set. The tuning paramter "cp" for the regression tree model was chosen using the leave one out cross validation. I picked the best tree model using the smallest MAE. The boosted tree model used cross-validation with 10 folds. The final chose model for the boosted tree model was determined using the smallest MAE.   
@@ -114,5 +113,6 @@ kable(Metric_Table, caption = "Prediction Metric for Two Potential Models", col.
   
 # Automation 
 First, I got unique weekday from the weekday column of the Data2 data set using unique() function. And then, I created filenames. and put filename for each day in a dateframe. 
+
 
 
