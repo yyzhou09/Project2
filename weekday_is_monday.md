@@ -62,10 +62,16 @@ Data<-gather(Data, weekday, weekdayvalue,14:20) %>% filter(weekdayvalue==1)
 I read data from the folder and then split daily data set into train and
 test set. The train set include 70% of the data and the test set include
 30% of the data. The date was filter to only include values for
+weekday\_is\_monday
 
 ``` r
 dayData<-Data%>%filter(weekday==params$weekday)%>%select(-c(weekday,weekdayvalue))
+print(params$weekday)
+```
 
+    ## [1] "weekday_is_monday"
+
+``` r
 set.seed(1)
 
 train <- sample(1:nrow(dayData), size = nrow(dayData)*0.7)
@@ -216,6 +222,19 @@ Prediction Metric for Two Potential Models
 
 # Automation
 
-First, I got unique weekday from the weekday column of the Data2 data
-set using unique() function. And then, I created filenames. and put
-filename for each day in a dateframe.
+First, I got unique weekday from the weekday column of the Data data set
+using unique() function. And then, I created filenames. and put filename
+for each day in a dateframe.
+
+``` r
+DayofWeek<-unique(Data$weekday)
+render_one<-function(weekday){
+  rmarkdown::render(
+    "Project2.Rmd",output_file = paste0(weekday,".md"), params = list(weekday=weekday)
+  )
+}
+
+for (weekday in DayofWeek){
+  render_one(weekday)
+}
+```
