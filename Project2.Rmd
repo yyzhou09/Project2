@@ -43,7 +43,7 @@ This analysis did not include all of the predicators. I used the following
   
 Additionally, I included the variables weekday_is_* in the dataset for generating a seperate report for each weekday. 
 ```{r read data}
-Data<-read_csv("../OnlineNewsPopularity.csv")
+Data<-read_csv("OnlineNewsPopularity.csv")
 Data<-Data%>%select(n_unique_tokens,num_hrefs, num_imgs, average_token_length, data_channel_is_lifestyle, global_rate_positive_words,avg_positive_polarity, abs_title_subjectivity,self_reference_avg_sharess, kw_avg_min, kw_avg_max, kw_avg_avg, shares, starts_with("weekday") )
 Data<-gather(Data, weekday, weekdayvalue,14:20) %>% filter(weekdayvalue==1)
 ```
@@ -111,6 +111,22 @@ kable(Metric_Table, caption = "Prediction Metric for Two Potential Models", col.
 
 ```
   
+  
+# Secondary Analysis (forked by Kolton Wiebusch)  
+This step is to add a multiple linear regression model to fit the training data, then test the model predictions on the test set.  
+  
+```{r secondaryAnalysis}
+linRegfit <- train(shares ~ ., data = dayDataTrain, method = "lm",
+                   preProcess = c("center", "scale"),
+                   trControl=trainControl(method="cv", number = 10, repeats = 5))
+linRegfit
+
+pred_lm <- predict(linRegfit, newdata = dayDataTest)   
+pred_lm_metric <- postResample(pred_lm, obs = dayDataTest$shares)
+kable(pred_lm_metric)
+```
+  
+  
 # Automation 
 First, I got unique weekday from the weekday column of the Data data set using unique() function. And then, I created filenames. and put filename for each day in a dateframe. 
 
@@ -126,5 +142,6 @@ for (weekday in DayofWeek){
   render_one(weekday)
 }
 ``````
+
 
 

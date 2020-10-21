@@ -7,6 +7,8 @@ Yuying Zhou
   - [Introduction](#introduction)
   - [Data](#data)
   - [Summarizations](#summarizations)
+  - [Secondary Analysis (forked by Kolton
+    Wiebusch)](#secondary-analysis-forked-by-kolton-wiebusch)
   - [Automation](#automation)
 
 # Package List
@@ -52,7 +54,7 @@ Additionally, I included the variables weekday\_is\_\* in the dataset
 for generating a seperate report for each weekday.
 
 ``` r
-Data<-read_csv("../OnlineNewsPopularity.csv")
+Data<-read_csv("OnlineNewsPopularity.csv")
 Data<-Data%>%select(n_unique_tokens,num_hrefs, num_imgs, average_token_length, data_channel_is_lifestyle, global_rate_positive_words,avg_positive_polarity, abs_title_subjectivity,self_reference_avg_sharess, kw_avg_min, kw_avg_max, kw_avg_avg, shares, starts_with("weekday") )
 Data<-gather(Data, weekday, weekdayvalue,14:20) %>% filter(weekdayvalue==1)
 ```
@@ -91,34 +93,27 @@ variations as the global rate positive words change.
 summary(dayDataTrain)  
 ```
 
-    ##  n_unique_tokens    num_hrefs         num_imgs      average_token_length
-    ##  Min.   :0.0000   Min.   :  0.00   Min.   : 0.000   Min.   :0.000       
-    ##  1st Qu.:0.4595   1st Qu.:  5.00   1st Qu.: 1.000   1st Qu.:4.475       
-    ##  Median :0.5199   Median : 10.00   Median : 1.000   Median :4.666       
-    ##  Mean   :0.5112   Mean   : 13.03   Mean   : 5.411   Mean   :4.507       
-    ##  3rd Qu.:0.5927   3rd Qu.: 17.00   3rd Qu.: 8.000   3rd Qu.:4.855       
-    ##  Max.   :0.9574   Max.   :105.00   Max.   :99.000   Max.   :6.295       
-    ##  data_channel_is_lifestyle global_rate_positive_words avg_positive_polarity
-    ##  Min.   :0.0000            Min.   :0.00000            Min.   :0.0000       
-    ##  1st Qu.:0.0000            1st Qu.:0.02825            1st Qu.:0.3126       
-    ##  Median :0.0000            Median :0.04040            Median :0.3659       
-    ##  Mean   :0.0728            Mean   :0.04063            Mean   :0.3567       
-    ##  3rd Qu.:0.0000            3rd Qu.:0.05263            3rd Qu.:0.4167       
-    ##  Max.   :1.0000            Max.   :0.13065            Max.   :1.0000       
-    ##  abs_title_subjectivity self_reference_avg_sharess   kw_avg_min    
-    ##  Min.   :0.0000         Min.   :     0             Min.   :  -1.0  
-    ##  1st Qu.:0.1250         1st Qu.:  1000             1st Qu.: 142.8  
-    ##  Median :0.4500         Median :  2350             Median : 244.1  
-    ##  Mean   :0.3276         Mean   :  6087             Mean   : 302.4  
-    ##  3rd Qu.:0.5000         3rd Qu.:  5200             3rd Qu.: 362.9  
-    ##  Max.   :0.5000         Max.   :663600             Max.   :8549.3  
-    ##    kw_avg_max       kw_avg_avg        shares      
-    ##  Min.   :  7178   Min.   : 1115   Min.   :    49  
-    ##  1st Qu.:170944   1st Qu.: 2505   1st Qu.:  1400  
-    ##  Median :239888   Median : 3045   Median :  2000  
-    ##  Mean   :250369   Mean   : 3300   Mean   :  3806  
-    ##  3rd Qu.:315360   3rd Qu.: 3839   3rd Qu.:  3700  
-    ##  Max.   :843300   Max.   :36717   Max.   :144400
+    ##  n_unique_tokens    num_hrefs         num_imgs      average_token_length data_channel_is_lifestyle
+    ##  Min.   :0.0000   Min.   :  0.00   Min.   : 0.000   Min.   :0.000        Min.   :0.0000           
+    ##  1st Qu.:0.4595   1st Qu.:  5.00   1st Qu.: 1.000   1st Qu.:4.475        1st Qu.:0.0000           
+    ##  Median :0.5199   Median : 10.00   Median : 1.000   Median :4.666        Median :0.0000           
+    ##  Mean   :0.5112   Mean   : 13.03   Mean   : 5.411   Mean   :4.507        Mean   :0.0728           
+    ##  3rd Qu.:0.5927   3rd Qu.: 17.00   3rd Qu.: 8.000   3rd Qu.:4.855        3rd Qu.:0.0000           
+    ##  Max.   :0.9574   Max.   :105.00   Max.   :99.000   Max.   :6.295        Max.   :1.0000           
+    ##  global_rate_positive_words avg_positive_polarity abs_title_subjectivity self_reference_avg_sharess
+    ##  Min.   :0.00000            Min.   :0.0000        Min.   :0.0000         Min.   :     0            
+    ##  1st Qu.:0.02825            1st Qu.:0.3126        1st Qu.:0.1250         1st Qu.:  1000            
+    ##  Median :0.04040            Median :0.3659        Median :0.4500         Median :  2350            
+    ##  Mean   :0.04063            Mean   :0.3567        Mean   :0.3276         Mean   :  6087            
+    ##  3rd Qu.:0.05263            3rd Qu.:0.4167        3rd Qu.:0.5000         3rd Qu.:  5200            
+    ##  Max.   :0.13065            Max.   :1.0000        Max.   :0.5000         Max.   :663600            
+    ##    kw_avg_min       kw_avg_max       kw_avg_avg        shares      
+    ##  Min.   :  -1.0   Min.   :  7178   Min.   : 1115   Min.   :    49  
+    ##  1st Qu.: 142.8   1st Qu.:170944   1st Qu.: 2505   1st Qu.:  1400  
+    ##  Median : 244.1   Median :239888   Median : 3045   Median :  2000  
+    ##  Mean   : 302.4   Mean   :250369   Mean   : 3300   Mean   :  3806  
+    ##  3rd Qu.: 362.9   3rd Qu.:315360   3rd Qu.: 3839   3rd Qu.:  3700  
+    ##  Max.   :8549.3   Max.   :843300   Max.   :36717   Max.   :144400
 
 ``` r
 res<-cor(dayDataTrain)
@@ -219,6 +214,45 @@ kable(Metric_Table, caption = "Prediction Metric for Two Potential Models", col.
 | MAE      |   4.358718e+03 | 4.017121e+03 |
 
 Prediction Metric for Two Potential Models
+
+# Secondary Analysis (forked by Kolton Wiebusch)
+
+This step is to add a multiple linear regression model to fit the
+training data, then test the model predictions on the test set.
+
+``` r
+linRegfit <- train(shares ~ ., data = dayDataTrain, method = "lm",
+                   preProcess = c("center", "scale"),
+                   trControl=trainControl(method="cv", number = 10, repeats = 5))
+linRegfit
+```
+
+    ## Linear Regression 
+    ## 
+    ## 1717 samples
+    ##   12 predictor
+    ## 
+    ## Pre-processing: centered (12), scaled (12) 
+    ## Resampling: Cross-Validated (10 fold) 
+    ## Summary of sample sizes: 1545, 1545, 1547, 1545, 1545, 1545, ... 
+    ## Resampling results:
+    ## 
+    ##   RMSE      Rsquared    MAE     
+    ##   6190.391  0.02329438  2950.674
+    ## 
+    ## Tuning parameter 'intercept' was held constant at a value of TRUE
+
+``` r
+pred_lm <- predict(linRegfit, newdata = dayDataTest)   
+pred_lm_metric <- postResample(pred_lm, obs = dayDataTest$shares)
+kable(pred_lm_metric)
+```
+
+|          |            x |
+| :------- | -----------: |
+| RMSE     | 2.382659e+04 |
+| Rsquared | 1.623700e-03 |
+| MAE      | 4.025629e+03 |
 
 # Automation
 
